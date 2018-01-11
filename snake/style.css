@@ -1,0 +1,68 @@
+body {
+  text-align: center;
+}
+
+header {
+  font-size: 60px;
+}
+
+aside {
+  width: 50vh;
+  height: 70%;
+
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.left {
+  float: left;
+  font-size: 30px;
+}
+
+.right {
+  float: right;
+}
+
+.slider {
+  width: 90%;
+  margin: 1em auto;
+}
+
+article {
+  position: absolute;
+  width: 80vh;
+  height: 80vh;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.row {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.row > div {
+  border: 0.2em solid black;
+  height: 100%;
+}
+
+.empty {
+  background-color: white;
+}
+
+.apple {
+  background-color: green;
+}
+
+.snake {
+  background-color: red;
+}
+
+.head {
+  background-color: orange;
+}
