@@ -41,17 +41,9 @@ function setTile(y, x, type) {
 }
 
 function isFree(y, x) {
-  for (const tile of snake) {
-    if (tile.y === y && tile.x === x) {
-      return false;
-    }
-  }
-
-  if (food.y === y && food.x === x) {
-    return false;
-  }
-
-  return true;
+  if ($(`#${y},${x}`).className === 'empty')
+    return true;
+  return false;
 }
 
 function newFood() {
@@ -131,7 +123,6 @@ function setup() {
   $('#board').innerHTML = html;
 
   // create Snake
-  direction = RIGHT;
   snake = [{ y: 0, x: 0 }, { y: 0, x: 1 }, { y: 0, x: 2 }];
   for (const tile of snake) {
     setTile(tile.y, tile.x, SNAKE);
