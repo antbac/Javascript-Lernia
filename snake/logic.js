@@ -19,9 +19,9 @@ function setup() {
   // board
   let html = '';
   for (let y = 0; y < dimensions; y++) {
-    html += '<div>';
+    html += `<div class="row" style="height: ${100 / dimensions}%">`;
     for (let x = 0; x < dimensions; x++) {
-      html += `<div id="${y},${x}">A</div>`;
+      html += `<div id="${y},${x}" style="width: ${100 / dimensions}%"></div>`;
     }
 
     html += '</div>';
