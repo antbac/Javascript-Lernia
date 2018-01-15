@@ -3,7 +3,7 @@
 let dimensions = 10;
 let direction;
 let snake = [];
-let food = [];
+let food = {};
 let timer;
 
 const FOOD = 0;
@@ -30,7 +30,6 @@ function $(input) {
 
 function setTile(y, x, type) {
   if (type === FOOD) {
-    food = [y, x];
     $(`#${y},${x}`).className = 'food';
   } else if (type === SNAKE) {
     $(`#${y},${x}`).className = 'snake';
@@ -41,9 +40,40 @@ function setTile(y, x, type) {
   }
 }
 
+function isFree(y, x) {
+  for (const tile of snake) {
+    if (tile.y === y && tile.x === x) {
+      return false;
+    }
+  }
+
+  if (food.y === y && food.x === x) {
+    return false;
+  }
+
+  return true;
+}
+
+function newFood() {
+  const freeTiles = [];
+  for (let y = 0; y < dimensions; y++) {
+    for (let x = 0; x < dimensions; x++) {
+      if (isFree(y, x)) {
+        freeTiles.push([y, x]);
+      }
+    }
+  }
+
+  const index = Math.floor(Math.random() * freeTiles.length);
+  const [y, x] = freeTiles[index];
+  food.y = y;
+  food.x = x;
+  setTile(y, x, FOOD);
+}
+
 function move() {
   const head = snake[snake.length - 1];
-  let [y, x] = head;
+  let { y, x } = head;
   switch (direction) {
     case RIGHT:
       x += 1;
@@ -58,12 +88,16 @@ function move() {
       y += 1;
       break;
   }
-  setTile(head[0], head[1], SNAKE);
+  setTile(head.y, head.x, SNAKE);
   setTile(y, x, HEAD);
-  setTile(snake[0][0], snake[0][1], EMPTY);
 
-  snake.push([y, x]);
-  snake.shift(); // Remove the first element
+  snake.push({ y: y, x: x });
+  if (y !== food.y || x !== food.x) {
+    setTile(snake[0].y, snake[0].x, EMPTY);
+    snake.shift(); // Remove the first element
+  } else {
+    newFood();
+  }
 }
 
 function setup() {
@@ -76,18 +110,22 @@ function setup() {
     html += '</div>';
   }
 
+  int = 1;
+
   $('#board').innerHTML = html;
 
   // create Snake
   direction = RIGHT;
-  snake = [[0, 0], [0, 1], [0, 2]];
+  snake = [{ y: 0, x: 0 }, { y: 0, x: 1 }, { y: 0, x: 2 }];
   for (const tile of snake) {
-    setTile(tile[0], tile[1], SNAKE);
+    setTile(tile.y, tile.x, SNAKE);
   }
 
-  setTile(snake[snake.length - 1][0], snake[snake.length - 1][1], HEAD);
+  setTile(snake[snake.length - 1].y, snake[snake.length - 1].x, HEAD);
 
   // create food
+  newFood();
+
   // create timer
   timer = setInterval(move, 350);
 
