@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 let dimensions = 10;
 let direction;
 let snake = [];
@@ -33,7 +35,6 @@ function setTile(y, x, type) {
   } else if (type === SNAKE) {
     $(`#${y},${x}`).className = 'snake';
   } else if (type === HEAD) {
-    snake.push([y, x]);
     $(`#${y},${x}`).className = 'head';
   } else if (type === EMPTY) {
     $(`#${y},${x}`).className = 'empty';
@@ -42,7 +43,6 @@ function setTile(y, x, type) {
 
 function move() {
   const head = snake[snake.length - 1];
-  console.log(head);
   let [y, x] = head;
   switch (direction) {
     case RIGHT:
@@ -59,9 +59,10 @@ function move() {
       break;
   }
   setTile(head[0], head[1], SNAKE);
-  snake.push([y, x]);
   setTile(y, x, HEAD);
   setTile(snake[0][0], snake[0][1], EMPTY);
+
+  snake.push([y, x]);
   snake.shift(); // Remove the first element
 }
 
@@ -70,10 +71,8 @@ function setup() {
   let html = '';
   for (let y = 0; y < dimensions; y++) {
     html += `<div class="row" style="height: ${100 / dimensions}%">`;
-    for (let x = 0; x < dimensions; x++) {
-      html += `<div id="${y},${x}" style="width: ${100 / dimensions}%"></div>`;
-    }
-
+    for (let x = 0; x < dimensions; x++)
+      html += `<div class="empty" id="${y},${x}" style="width: ${100 / dimensions}%"></div>`;
     html += '</div>';
   }
 
