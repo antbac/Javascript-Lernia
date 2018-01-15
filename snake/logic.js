@@ -71,6 +71,16 @@ function newFood() {
   setTile(y, x, FOOD);
 }
 
+function partOfSnake(y, x) {
+  for (const tile of snake) {
+    if (tile.y === y && tile.x === x) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function move() {
   const head = snake[snake.length - 1];
   let { y, x } = head;
@@ -88,6 +98,12 @@ function move() {
       y += 1;
       break;
   }
+
+  if (y === -1 || x === -1 || y === dimensions || x === dimensions || partOfSnake(y, x)) {
+    clearInterval(timer);
+    return;
+  }
+
   setTile(head.y, head.x, SNAKE);
   setTile(y, x, HEAD);
 
