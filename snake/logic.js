@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 let dimensions = 10;
-let direction;
+let direction = [];
 let snake = [];
 let food = {};
 let timer;
@@ -84,7 +84,7 @@ function partOfSnake(y, x) {
 function move() {
   const head = snake[snake.length - 1];
   let { y, x } = head;
-  switch (direction) {
+  switch (direction[0]) {
     case RIGHT:
       x += 1;
       break;
@@ -103,6 +103,8 @@ function move() {
     clearInterval(timer);
     return;
   }
+
+  direction[1] = direction[0];
 
   setTile(head.y, head.x, SNAKE);
   setTile(y, x, HEAD);
@@ -126,8 +128,6 @@ function setup() {
     html += '</div>';
   }
 
-  int = 1;
-
   $('#board').innerHTML = html;
 
   // create Snake
@@ -138,6 +138,9 @@ function setup() {
   }
 
   setTile(snake[snake.length - 1].y, snake[snake.length - 1].x, HEAD);
+
+  // set direction
+  direction = [RIGHT, RIGHT];
 
   // create food
   newFood();
@@ -152,12 +155,16 @@ window.onkeyup = function (e) {
 
   //console.log('You pressed: ' + key);
   if (key === 37) { // LEFT
-    direction = LEFT;
+    if (direction[1] !== RIGHT)
+      direction[0] = LEFT;
   } else if (key === 38) { // UP
-    direction = UP;
+    if (direction[1] !== DOWN)
+      direction[0] = UP;
   } else if (key === 39) { // RIGHT
-    direction = RIGHT;
+    if (direction[1] !== LEFT)
+      direction[0] = RIGHT;
   } else if (key === 40) { // DOWN
-    direction = DOWN;
+    if (direction[1] !== UP)
+      direction[0] = DOWN;
   }
 };
