@@ -37,12 +37,12 @@ const message = function () {
   return res;
 };
 
-const comment = function (depth = 0) {
+const comment = function (depth = 0, msg = null) {
   if (depth >= 5)
     return {
       id: ('' + Math.random()).substring(2),
       commenter: commenter(),
-      message: message(),
+      message: msg || message(),
       likes: Math.floor(Math.random() * 100),
       creation: new Date(),
       answers: [],
@@ -55,7 +55,7 @@ const comment = function (depth = 0) {
   return {
     id: ('' + Math.random()).substring(2),
     commenter: commenter(),
-    message: message(),
+    message: msg || message(),
     likes: Math.floor(Math.random() * 100),
     creation: new Date(),
     answers: answers,
@@ -66,48 +66,95 @@ const comments = [];
 for (let i = 0; i < 3 + Math.random() * 7; i++)
   comments.push(comment());
 
-const get = function (id, elem) {
+const update = function (id, callback, elem) {
   if (elem && elem.id === id) {
-    return elem;
+    callback(elem);
+    return true;
   }
 
   let res;
   if (elem && elem.answers)
     for (const answer of elem.answers)
-      res = res || get(id, answer);
+      if (update(id, callback, answer))
+        return true;
 
   if (elem)
-    return res;
+    return false;
 
   for (const answer of comments)
-    res = res || get(id, answer);
+    if (update(id, callback, answer))
+      return true;
 
-  return res;
+  return false;
 };
 
 const like = function (id) {
-  const res = get(id);
-  if (res)
+  update(id, res => {
     res.likes += 1;
-  return res;
+  });
 };
 
 const edit = function (id, message) {
-  const res = get(id);
-  if (res)
+  update(id, res => {
     res.message = message;
-  return res;
+  });
+};
+
+const answer = function (id, message) {
+  update(id, res => {
+    res.answers.push(comment(5, message));
+  });
+};
+
+const cutOff = function () {
+  const _comments = clone(comments);
+  for (let i = 0; i < _comments.length; i++)
+    for (let j = 0; j < _comments[i].answers.length; j++)
+      for (let k = 0; k < _comments[i].answers[j].answers.length; k++)
+        _comments[i].answers[j].answers[k].answers = [];
+
+  return _comments;
 };
 
 app.post('/like/:id', function (req, res) {
   const id = req.params.id;
-
-  let comment = like(id);
-
-  if (comment)
-    res.json(comment);
+  like(id);
+  if (req.body.deep)
+    res.json(comments);
   else
+    res.json(cutOff());
+});
+
+app.post('/comment', function (req, res) {
+  const message = req.body.message;
+
+  if (message) {
+    comments.push(comment(5, message));
+    if (req.body.deep)
+      res.json(comments);
+    else
+      res.json(cutOff());
+  } else {
     res.sendStatus(404);
+  }
+});
+
+app.post('/answer/:id', function (req, res) {
+  const id = req.params.id;
+  const message = req.body.message;
+
+  let comment;
+  if (message) {
+    answer(id, message);
+  } else {
+    res.sendStatus(400);
+    return;
+  }
+
+  if (req.body.deep)
+    res.json(comments);
+  else
+    res.json(cutOff());
 });
 
 app.post('/edit/:id', function (req, res) {
@@ -115,17 +162,17 @@ app.post('/edit/:id', function (req, res) {
   const message = req.body.message;
 
   let comment;
-  if (id && message) {
-    comment = edit(id, message);
+  if (message) {
+    edit(id, message);
   } else {
     res.sendStatus(400);
     return;
   }
 
-  if (comment)
-    res.json(comment);
+  if (req.body.deep)
+    res.json(comments);
   else
-    res.sendStatus(404);
+    res.json(cutOff());
 });
 
 app.get('/deep', function (req, res) {
@@ -133,13 +180,7 @@ app.get('/deep', function (req, res) {
 });
 
 app.get('/shallow', function (req, res) {
-  const _comments = clone(comments);
-  for (let i = 0; i < _comments.length; i++)
-    for (let j = 0; j < _comments[i].answers.length; j++)
-      for (let k = 0; k < _comments[i].answers[j].answers.length; k++)
-        _comments[i].answers[j].answers[k].answers = [];
-
-  res.json(_comments);
+  res.json(cutOff());
 });
 
 console.log(`App listening on port ${port}`);
