@@ -9,3 +9,5 @@ alert(Your message);
 
 console.log(Your message);
 ```
+
+// TODO: Add debugger tool in the browser
