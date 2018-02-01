@@ -37,10 +37,14 @@ const message = function () {
   return res;
 };
 
+const idEncodnig = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 const comment = function (depth = 0, msg = null) {
+  const id = [];
+  for (let i = 0; i < 10; i++)
+    id.push(idEncodnig[Math.floor(Math.random() * idEncodnig.length)]);
   if (depth >= 5)
     return {
-      id: ('' + Math.random()).substring(2),
+      id: id.join(''),
       commenter: commenter(),
       message: msg || message(),
       likes: Math.floor(Math.random() * 100),
@@ -53,7 +57,7 @@ const comment = function (depth = 0, msg = null) {
     answers.push(comment(depth + 1));
 
   return {
-    id: ('' + Math.random()).substring(2),
+    id: id.join(''),
     commenter: commenter(),
     message: msg || message(),
     likes: Math.floor(Math.random() * 100),
