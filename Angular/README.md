@@ -45,6 +45,11 @@ Create a new application by using the **ng new** followed by the name of the app
 ng new hello-world
 ```
 
+Go to the newly created folder by typing:
+```bash
+cd name_of_new_folder
+```
+
 Once it finishes setting everything up you can start the new application by entering:
 ```bash
 ng serve -o
