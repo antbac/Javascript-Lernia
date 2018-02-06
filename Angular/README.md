@@ -47,7 +47,7 @@ ng new hello-world
 
 Once it finishes setting everything up you can start the new application by entering:
 ```bash
-np serve -o
+ng serve -o
 ```
 This will automatically open a browser where you can see your current application.
 It will also set up watchers that automatically update the web-page if you edit any of the files and hit **save**.
@@ -60,6 +60,3 @@ The main ones, and likely the only ones we will be touching upon are:
 - *src/assets* contains all the images or other media we want to display in our application
 - *src/favicon.ico* contains the image shown on the tab in our browser
 - *src/styles.css* contains CSS-code that should apply for our entire application
-
-## TODO:
-- ng g c myNewComponent
